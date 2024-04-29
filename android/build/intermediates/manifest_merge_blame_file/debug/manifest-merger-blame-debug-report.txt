@@ -1,0 +1,67 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:tools="http://schemas.android.com/tools"
+4    package="com.bigbluebuttontabletsdk" >
+5
+6    <uses-sdk
+7        android:minSdkVersion="26"
+7-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml
+8        android:targetSdkVersion="31" />
+8-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml
+9
+10    <uses-permission
+10-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:4:3-5:43
+11        android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+11-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:4:20-74
+12        tools:ignore="ProtectedPermissions" />
+12-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:5:5-40
+13    <uses-permission
+13-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:6:3-7:43
+14        android:name="android.permission.CAPTURE_SECURE_VIDEO_OUTPUT"
+14-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:6:20-81
+15        tools:ignore="ProtectedPermissions" />
+15-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:7:5-40
+16    <uses-permission
+16-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:8:3-9:43
+17        android:name="android.permission.CAPTURE_AUDIO_OUTPUT"
+17-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:8:20-74
+18        tools:ignore="ProtectedPermissions" />
+18-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:9:5-40
+19    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+19-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:10:3-69
+19-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:10:20-66
+20    <uses-permission android:name="android.permission.CAMERA" />
+20-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:11:3-63
+20-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:11:20-60
+21    <uses-permission android:name="android.permission.INTERNET" />
+21-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:13:3-65
+21-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:13:20-62
+22    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+22-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:14:3-78
+22-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:14:20-75
+23    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+23-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:16:3-76
+23-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:16:20-73
+24    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+24-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:17:3-75
+24-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:17:20-72
+25
+26    <application
+26-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:20:3-27:17
+27        android:allowBackup="false"
+27-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:21:5-32
+28        android:supportsRtl="true" >
+28-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:22:5-31
+29        <service
+29-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:5-26:34
+30            android:name="com.bigbluebuttontabletsdk.broadcastScreen.BBBSampleHandler"
+30-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:14-62
+31            android:enabled="true"
+31-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:25:7-29
+32            android:exported="false"
+32-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:26:7-31
+33            android:foregroundServiceType="mediaProjection" />
+33-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:24:7-54
+34    </application>
+35
+36</manifest>

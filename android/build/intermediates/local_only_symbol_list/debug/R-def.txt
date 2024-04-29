@@ -1,0 +1,5 @@
+R_DEF: Internal format may change without notice
+local
+drawable icon
+layout activity_rtc
+raw music2
