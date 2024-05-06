@@ -251,7 +251,7 @@ extension ScreenShareWebRTCClient {
             
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category(rawValue: AVAudioSession.Category.playAndRecord.rawValue))
                 try self.rtcAudioSession.overrideOutputAudioPort(.none)
             } catch let error {
                 debugPrint("Error setting AVAudioSession category: \(error)")
@@ -269,7 +269,7 @@ extension ScreenShareWebRTCClient {
             
             self.rtcAudioSession.lockForConfiguration()
             do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category(rawValue: AVAudioSession.Category.playAndRecord.rawValue))
                 try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
                 try self.rtcAudioSession.setActive(true)
             } catch let error {
