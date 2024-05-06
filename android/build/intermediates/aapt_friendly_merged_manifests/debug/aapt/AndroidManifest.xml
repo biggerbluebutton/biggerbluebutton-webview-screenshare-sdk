@@ -31,6 +31,7 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
+        <service android:name="com.bigbluebuttontabletsdk.service.FloatingWidgetService" />
     </application>
 
 </manifest>

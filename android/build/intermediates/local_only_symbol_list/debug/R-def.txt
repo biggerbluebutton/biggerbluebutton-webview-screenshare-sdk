@@ -1,5 +1,14 @@
 R_DEF: Internal format may change without notice
 local
 drawable icon
+drawable remove
+id chathead_img
+id chathead_relativelayout
+id remove_img
+id remove_relativelayout
 layout activity_rtc
+layout floating_widget
+layout remove
+mipmap ic_launcher
+mipmap ic_launcher_round
 raw music2
