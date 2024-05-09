@@ -13,6 +13,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -25,10 +26,8 @@ import com.bigbluebuttontabletsdk.utils.Utils;
 import org.webrtc.IceCandidate;
 
 public class BBBSampleHandler extends Service {
-  private static final String TAG = "BBBSampleHandler    ";
+  private static final String TAG = "BBBSampleHandler";
   private static final String CHANNEL_ID = "ScreenShareChannel";
-  private MediaProjection mediaProjection;
-  private MediaProjectionManager projectionManager;
   private ScreenBroadcasterService mScreenBroadcasterService;
   private SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener;
   private PreferencesUtils sharedPreferences;
@@ -56,8 +55,12 @@ public class BBBSampleHandler extends Service {
     createNotificationChannel();
     // Create a notification
     Notification notification = buildNotification();
-    // Start the foreground service with the notification
-    startForeground(1122, notification);
+    try {
+      startForeground(1122, notification);
+    } catch (SecurityException e) {
+      Log.e(TAG, "Failed to start foreground service", e);
+    }
+
     return START_NOT_STICKY;
   }
 
@@ -66,14 +69,14 @@ public class BBBSampleHandler extends Service {
     CharSequence name = "ForegroundServiceChannel";
     String description = "Channel for Foreground Service";
     int importance = NotificationManager.IMPORTANCE_DEFAULT;
-    NotificationChannel channel = new NotificationChannel("channel_id", name, importance);
+    NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
     channel.setDescription(description);
     NotificationManager notificationManager = getSystemService(NotificationManager.class);
     notificationManager.createNotificationChannel(channel);
   }
   private Notification buildNotification() {
     // Create a notification
-    Notification notification = new NotificationCompat.Builder(this, "channel_id")
+    Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
       .setContentTitle("Screen sharing")
       .setContentText("Your screen share is running in background")
       .setSmallIcon(R.drawable.icon)

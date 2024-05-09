@@ -211,15 +211,15 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private void checkAndRequestPermissions() {
     Activity currentActivity = getCurrentActivity();
     if (currentActivity != null) {
-      // Check each permission in the MANDATORY_PERMISSIONS array
       for (String permission : MANDATORY_PERMISSIONS) {
-
         if (ContextCompat.checkSelfPermission(currentActivity, permission) != PackageManager.PERMISSION_GRANTED) {
           ActivityCompat.requestPermissions(currentActivity, MANDATORY_PERMISSIONS, PERMISSION_REQUEST_CODE);
-          isAllDone = false;
-          return; // Exit the method after requesting the permission
+          return; // Exit after requesting the permissions
         }
       }
+      isAllDone = true; // Set true if all permissions are granted
+    } else {
+      Utils.showLogs("Current activity is null");
     }
   }
 

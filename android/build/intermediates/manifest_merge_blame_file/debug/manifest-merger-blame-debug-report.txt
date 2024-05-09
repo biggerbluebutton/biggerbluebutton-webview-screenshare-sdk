@@ -6,7 +6,7 @@
 6    <uses-sdk
 7        android:minSdkVersion="26"
 7-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml
-8        android:targetSdkVersion="31" />
+8        android:targetSdkVersion="32" />
 8-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml
 9
 10    <uses-permission
