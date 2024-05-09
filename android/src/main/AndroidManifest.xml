@@ -20,10 +20,12 @@
   <application
     android:allowBackup="false"
     android:supportsRtl="true">
-    <service android:name=".broadcastScreen.BBBSampleHandler"
+    <service
+      android:name=".broadcastScreen.BBBSampleHandler"
       android:foregroundServiceType="mediaProjection"
       android:enabled="true"
-      android:exported="false" />
+      android:exported="false"
+      />
 
 <!--    <service android:name=".service.FloatingWidgetService"-->
 <!--      />-->

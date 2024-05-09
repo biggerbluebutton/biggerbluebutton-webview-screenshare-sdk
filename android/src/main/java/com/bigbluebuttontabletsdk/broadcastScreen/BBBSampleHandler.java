@@ -9,9 +9,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ServiceInfo;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -55,10 +57,10 @@ public class BBBSampleHandler extends Service {
     createNotificationChannel();
     // Create a notification
     Notification notification = buildNotification();
-    try {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      startForeground(1122, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+    } else {
       startForeground(1122, notification);
-    } catch (SecurityException e) {
-      Log.e(TAG, "Failed to start foreground service", e);
     }
 
     return START_NOT_STICKY;
