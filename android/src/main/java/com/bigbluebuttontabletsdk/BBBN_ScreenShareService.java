@@ -50,6 +50,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private static final int CAPTURE_PERMISSION_REQUEST_CODE = 1;
   // List of mandatory application permissions.／
   private static final String[] MANDATORY_PERMISSIONS = {"android.permission.MODIFY_AUDIO_SETTINGS",
+    "android.permission.MEDIA_PROJECTION", "android.permission.FOREGROUND_SERVICE",
     "android.permission.RECORD_AUDIO", "android.permission.INTERNET","android.permission.CAMERA","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.SYSTEM_ALERT_WINDOW"};
   private static final int PERMISSION_REQUEST_CODE = 100;
   public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
@@ -212,6 +213,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
     if (currentActivity != null) {
       // Check each permission in the MANDATORY_PERMISSIONS array
       for (String permission : MANDATORY_PERMISSIONS) {
+
         if (ContextCompat.checkSelfPermission(currentActivity, permission) != PackageManager.PERMISSION_GRANTED) {
           ActivityCompat.requestPermissions(currentActivity, MANDATORY_PERMISSIONS, PERMISSION_REQUEST_CODE);
           isAllDone = false;

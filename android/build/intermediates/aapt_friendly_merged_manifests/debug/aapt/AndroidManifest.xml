@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.MEDIA_PROJECTION" />
 
     <application
         android:allowBackup="false"
@@ -31,7 +32,10 @@
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
-        <service android:name="com.bigbluebuttontabletsdk.service.FloatingWidgetService" />
+
+        <!-- <service android:name=".service.FloatingWidgetService" -->
+        <!-- /> -->
+
     </application>
 
 </manifest>
