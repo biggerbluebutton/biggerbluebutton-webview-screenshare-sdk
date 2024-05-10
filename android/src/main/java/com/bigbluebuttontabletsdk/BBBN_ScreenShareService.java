@@ -3,6 +3,7 @@ package com.bigbluebuttontabletsdk;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,8 +52,6 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
     "android.permission.MEDIA_PROJECTION", "android.permission.FOREGROUND_SERVICE",
     "android.permission.RECORD_AUDIO", "android.permission.INTERNET","android.permission.CAMERA","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.SYSTEM_ALERT_WINDOW"};
   private static final int PERMISSION_REQUEST_CODE = 100;
-  public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD = 1234;
-  public static int OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG = 5678;
   public static int sDeviceWidth;
   public static int sDeviceHeight;
   private BBBSampleHandler bbbSampleHandler;
@@ -125,14 +124,24 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   }
   @ReactMethod
   public void handleBackPress() {
-    Log.d("BackPress","work...");
-    reactContext.unbindService(serviceConnection);
-    Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
-    reactContext.stopService(serviceIntent);
+    if (isServiceRunning(reactContext, BBBSampleHandler.class)) {
+      reactContext.unbindService(serviceConnection);
+      Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
+      reactContext.stopService(serviceIntent);
+    }
   }
 
 
-
+  // Utility method to check if the service is running
+  private boolean isServiceRunning(Context context, Class<?> serviceClass) {
+    ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+    for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+      if (serviceClass.getName().equals(service.service.getClassName())) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   private void activateAudioSession(boolean activate) {
     if (activate) {
