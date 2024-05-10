@@ -7,7 +7,6 @@ import setFullAudioRemoteSDP from '../methods/setFullAudioRemoteSDP';
 import addScreenShareRemoteIceCandidate from '../methods/addScreenShareRemoteIceCandidate';
 import createFullAudioOffer from '../methods/createFullAudioOffer';
 import stopScreenShare from '../methods/stopScreenShare';
-import { NativeModules } from 'react-native';
 
 function observePromiseResult(
   instanceId: Number,
