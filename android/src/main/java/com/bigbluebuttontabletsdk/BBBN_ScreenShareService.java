@@ -25,8 +25,6 @@ import androidx.core.content.ContextCompat;
 
 import com.bigbluebuttontabletsdk.broadcastScreen.BBBSampleHandler;
 import com.bigbluebuttontabletsdk.broadcastScreen.BigBlueButtonSDK;
-import com.bigbluebuttontabletsdk.broadcastScreen.FullAudioService;
-import com.bigbluebuttontabletsdk.service.FloatingWidgetService;
 import com.bigbluebuttontabletsdk.utils.BBBSharedData;
 import com.bigbluebuttontabletsdk.utils.EventEmitterData;
 import com.bigbluebuttontabletsdk.utils.PreferencesUtils;
@@ -58,7 +56,6 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   public static int sDeviceWidth;
   public static int sDeviceHeight;
   private BBBSampleHandler bbbSampleHandler;
-  private FloatingWidgetService floatingWidgetService;
   private static Intent mMediaProjectionPermissionResultData;
   boolean isAllDone = true;
 
@@ -119,19 +116,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
     String stunTurnJson2 = BBBSharedData.generatePayload(properties);
     PreferencesUtils.getInstance(reactContext).putString(BBBSharedData.SharedData.addScreenShareRemoteIceCandidate,stunTurnJson2);
   }
-  private final ServiceConnection widgetserviceConnection = new ServiceConnection() {
-    @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-      Utils.showLogs("onServiceConnected ...");
-      FloatingWidgetService.LocalBinder binder = (FloatingWidgetService.LocalBinder) iBinder;
-      floatingWidgetService = binder.getService();
 
-    }
-    @Override
-    public void onServiceDisconnected(ComponentName componentName) {
-
-    }
-  };
   @ReactMethod
   public void stopScreenShareBroadcastExtension() {
     Utils.showLogs("stopScreenShareBroadcastExtension");
@@ -139,54 +124,15 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
 
   }
   @ReactMethod
-  public void startFloatingWidgetService() {
-//    Context context = getReactApplicationContext();
-//    if (!Settings.canDrawOverlays(reactContext)) {
-//      Intent serviceIntent = new Intent(reactContext, FloatingWidgetService.class);
-//     reactContext.startForegroundService(serviceIntent);
-//      reactContext.bindService(serviceIntent, widgetserviceConnection, BIND_AUTO_CREATE);
-//    }
-    //if (!Settings.canDrawOverlays(reactContext)) {
-    if(Utils.canDrawOverlays(reactContext))
-      reactContext.startService(new Intent(reactContext, FloatingWidgetService.class));
-    else{
-      requestPermission(OVERLAY_PERMISSION_REQ_CODE_CHATHEAD);
-    }
-
-      // Intent to open the system settings to grant permission
-//      Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-//        Uri.parse("package:" + reactContext.getPackageName()));
-//      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    //  reactContext.startService(intent);
-//      reactContext.startActivity(intent);
-    //  reactContext.startForegroundService(intent);
-   // }
-
-//    else {
-//      // Start the service if permission is granted
-//      Intent serviceIntent = new Intent(reactContext, FloatingWidgetService.class);
-//      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//        reactContext.startForegroundService(serviceIntent);
-//      } else {
-//        reactContext.startService(serviceIntent);
-//      }
-//      reactContext.bindService(serviceIntent, widgetserviceConnection, Context.BIND_AUTO_CREATE);
-//    }
-  }
-
-  @ReactMethod
-  public void stopFloatingWidgetService() {
-//    Log.d("ServiceStatus", "Attempting to stop service");
-//    if (floatingWidgetService != null) {
-//      floatingWidgetService.finishMeeting();
-//    }
-//    else {
-//      Log.d("ServiceStatus", "Service reference is null");
-//    }
-    Intent serviceIntent = new Intent(reactContext, FloatingWidgetService.class);
+  public void handleBackPress() {
+    Log.d("BackPress","work...");
+    reactContext.unbindService(serviceConnection);
+    Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
     reactContext.stopService(serviceIntent);
-//    reactContext.unbindService(widgetserviceConnection);
   }
+
+
+
 
   private void activateAudioSession(boolean activate) {
     if (activate) {
@@ -255,12 +201,20 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private void startScreenCapture() {
     Activity currentActivity = getCurrentActivity();
     if (currentActivity != null) {
-      MediaProjectionManager mediaProjectionManager =
-        (MediaProjectionManager)currentActivity.getApplication().getSystemService(
-          Context.MEDIA_PROJECTION_SERVICE);
-      currentActivity.startActivityForResult(
-        mediaProjectionManager.createScreenCaptureIntent(), CAPTURE_PERMISSION_REQUEST_CODE);
-      Utils.showLogs("startScreenCapture");
+      try {
+        MediaProjectionManager mediaProjectionManager =
+          (MediaProjectionManager)currentActivity.getApplication().getSystemService(
+            Context.MEDIA_PROJECTION_SERVICE);
+        if (mediaProjectionManager != null) {
+          Intent intent = mediaProjectionManager.createScreenCaptureIntent();
+          currentActivity.startActivityForResult(intent, CAPTURE_PERMISSION_REQUEST_CODE);
+          Utils.showLogs("startScreenCapture");
+        } else {
+          Utils.showLogs("Failed to get MediaProjectionManager");
+        }
+      } catch (Exception e) {
+        Utils.showLogs("Error starting screen capture: " + e.getMessage());
+      }
     }
   }
 
@@ -278,14 +232,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
 
     }
   };
-  private void showChatHeadMsg(){
-    java.util.Date now = new java.util.Date();
-    String str = "test by henry  " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(now);
 
-    Intent it = new Intent(reactContext, FloatingWidgetService.class);
-    it.putExtra(Utils.EXTRA_MSG, str);
-   reactContext.startService(it);
-  }
   private void needPermissionDialog(final int requestCode){
     AlertDialog.Builder builder = new AlertDialog.Builder(reactContext);
     builder.setMessage("You need to allow permission");
@@ -310,7 +257,6 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
 
   @Override
   public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-    Utils.showLogs("outside ...");
     if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
       BigBlueButtonSDK.initialize(activity, reactContext);
       EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
@@ -324,21 +270,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
       reactContext.bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
 
     }
-    if (requestCode == OVERLAY_PERMISSION_REQ_CODE_CHATHEAD) {
-      if (!Utils.canDrawOverlays(reactContext)) {
-        needPermissionDialog(requestCode);
-      }else{
-        reactContext.startService(new Intent(reactContext, FloatingWidgetService.class));
-      }
 
-    }else if(requestCode == OVERLAY_PERMISSION_REQ_CODE_CHATHEAD_MSG){
-      if (!Utils.canDrawOverlays(reactContext)) {
-        needPermissionDialog(requestCode);
-      }else{
-        showChatHeadMsg();
-      }
-
-    }
 
   }
 

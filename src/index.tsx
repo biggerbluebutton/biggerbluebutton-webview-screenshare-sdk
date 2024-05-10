@@ -1,4 +1,9 @@
-import { EmitterSubscription, Platform, ViewStyle } from 'react-native';
+import {
+  EmitterSubscription,
+  Platform,
+  ViewStyle,
+  NativeModules,
+} from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import BBBN_SystemBroadcastPicker from './native-components/BBBN_SystemBroadcastPicker';
 import { WebView } from 'react-native-webview';
@@ -12,6 +17,7 @@ type BigBlueButtonTabletSdkProps = {
   style: ViewStyle;
   onError?: any;
   onSuccess?: any;
+  callState?: any;
 };
 
 const data = {
@@ -29,11 +35,10 @@ export const BigBlueButtonTablet = ({
   style,
   onError,
   onSuccess,
+  callState,
 }: BigBlueButtonTabletSdkProps) => {
   const webViewRef = useRef(null);
   const thisInstanceId = ++data.instances;
-
-  // console.log("XXX - ", thisInstanceId);
 
   useEffect(() => {
     const logPrefix = `[${thisInstanceId}] - ${url.substring(8, 16)}`;
@@ -54,6 +59,39 @@ export const BigBlueButtonTablet = ({
     };
   }, [webViewRef, thisInstanceId, url]);
 
+  useEffect(() => {
+    return () => {
+      if (Platform.OS === 'android') {
+        NativeModules.BBBN_ScreenShareService.handleBackPress();
+      }
+    };
+  }, []);
+
+  const jsCode = `
+  (function () {
+    var originalLog = console.log;
+    console.log = function () {
+        // Check if there is at least an eleventh argument
+        if (arguments.length > 10) {
+            var msg = ''; 
+            if (arguments[10].includes("Audio Joined")) { 
+                msg = "callStarted"; 
+            } else if (arguments[10].includes("Audio ended without issue")) { 
+                msg = "callStopped"; 
+            }
+
+            // If msg is set, create a JSON object and send it
+            if (msg) {
+                var dataToSend = JSON.stringify({ method: msg });
+                window.ReactNativeWebView.postMessage(dataToSend);    
+            }
+        }
+        // Call the original console.log with all its arguments
+        originalLog.apply(console, arguments);    
+    };
+})();
+    `;
+
   return (
     <>
       {renderPlatformSpecificComponents()}
@@ -64,10 +102,12 @@ export const BigBlueButtonTablet = ({
           style={{ ...style }}
           contentMode={'mobile'}
           onMessage={(msg: any) =>
-            handleWebviewMessage(thisInstanceId, webViewRef, msg)
+            handleWebviewMessage(thisInstanceId, webViewRef, msg, callState)
           }
           applicationNameForUserAgent="BigBlueButton-Tablet"
           allowsInlineMediaPlayback={true}
+          injectedJavaScript={jsCode}
+          javaScriptEnabled={true}
           mediaCapturePermissionGrantType={'grant'}
           onLoadEnd={(content: any) => {
             /*in case of success, the property code is not defined*/

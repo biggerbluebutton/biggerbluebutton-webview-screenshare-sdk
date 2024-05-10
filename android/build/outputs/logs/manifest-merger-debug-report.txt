@@ -1,8 +1,8 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-33:12
-INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-33:12
-INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-33:12
+ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-32:12
+INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-32:12
+INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:1:1-32:12
 	package
 		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:3:3-39
 		INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml
@@ -58,21 +58,21 @@ ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/s
 	android:name
 		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:18:20-70
 application
-ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:20:3-31:17
+ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:21:3-30:17
 	android:supportsRtl
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:22:5-31
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:5-31
 	android:allowBackup
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:21:5-32
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:22:5-32
 service#com.bigbluebuttontabletsdk.broadcastScreen.BBBSampleHandler
-ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:5-26:34
+ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:24:5-29:9
 	android:enabled
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:25:7-29
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:27:7-29
 	android:exported
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:26:7-31
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:28:7-31
 	android:foregroundServiceType
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:24:7-54
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:26:7-54
 	android:name
-		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:14-62
+		ADDED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:25:7-55
 uses-sdk
 INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml

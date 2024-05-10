@@ -134,6 +134,7 @@ public class BBBSampleHandler extends Service {
     stopForeground(true); // Stop the foreground service
   }
 
+
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {

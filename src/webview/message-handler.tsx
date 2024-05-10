@@ -7,6 +7,7 @@ import setFullAudioRemoteSDP from '../methods/setFullAudioRemoteSDP';
 import addScreenShareRemoteIceCandidate from '../methods/addScreenShareRemoteIceCandidate';
 import createFullAudioOffer from '../methods/createFullAudioOffer';
 import stopScreenShare from '../methods/stopScreenShare';
+import { NativeModules } from 'react-native';
 
 function observePromiseResult(
   instanceId: Number,
@@ -37,13 +38,14 @@ function observePromiseResult(
 export function handleWebviewMessage(
   instanceId: Number,
   webViewRef: MutableRefObject<any>,
-  event: WebViewMessageEvent
+  event: WebViewMessageEvent,
+  callState?: any
 ) {
   const stringData = event?.nativeEvent?.data;
-
+  const data = JSON.parse(stringData);
   console.log('handleWebviewMessage - ', instanceId);
 
-  const data = JSON.parse(stringData);
+  callState(data?.method);
   if (data?.method && data?.sequence) {
     let promise;
     switch (data?.method) {

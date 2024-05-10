@@ -127,12 +127,9 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
-
-
-
-  // implementation 'org.webrtc:google-webrtc:1.0.32006'
   implementation "io.getstream:stream-webrtc-android:1.1.2"
   implementation 'com.google.code.gson:gson:2.8.9'
+  implementation 'androidx.cardview:cardview:1.0.0'
 
 // From node_modules
 }

@@ -50,25 +50,21 @@
 25-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:18:20-70
 26
 27    <application
-27-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:20:3-31:17
+27-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:21:3-30:17
 28        android:allowBackup="false"
-28-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:21:5-32
+28-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:22:5-32
 29        android:supportsRtl="true" >
-29-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:22:5-31
+29-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:5-31
 30        <service
-30-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:5-26:34
+30-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:24:5-29:9
 31            android:name="com.bigbluebuttontabletsdk.broadcastScreen.BBBSampleHandler"
-31-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:23:14-62
+31-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:25:7-55
 32            android:enabled="true"
-32-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:25:7-29
+32-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:27:7-29
 33            android:exported="false"
-33-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:26:7-31
+33-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:28:7-31
 34            android:foregroundServiceType="mediaProjection" />
-34-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:24:7-54
-35
-36        <!-- <service android:name=".service.FloatingWidgetService" -->
-37        <!-- /> -->
-38
-39    </application>
-40
-41</manifest>
+34-->/Users/mac/Desktop/biggerbluebutton-webview-screenshare-sdk/android/src/main/AndroidManifest.xml:26:7-54
+35    </application>
+36
+37</manifest>
