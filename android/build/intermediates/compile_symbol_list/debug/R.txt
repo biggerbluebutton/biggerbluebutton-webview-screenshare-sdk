@@ -634,7 +634,6 @@ int drawable abc_textfield_search_material 0x0
 int drawable abc_vector_test 0x0
 int drawable autofill_inline_suggestion_chip_background 0x0
 int drawable icon 0x0
-int drawable logo 0x0
 int drawable notification_action_background 0x0
 int drawable notification_bg 0x0
 int drawable notification_bg_low 0x0
@@ -649,7 +648,6 @@ int drawable notification_tile_bg 0x0
 int drawable notify_panel_notification_icon_bg 0x0
 int drawable redbox_top_border_background 0x0
 int drawable remove 0x0
-int drawable rounded_corners 0x0
 int drawable tooltip_frame_dark 0x0
 int drawable tooltip_frame_light 0x0
 int id accessibility_action_clickable_span 0x0
@@ -724,7 +722,6 @@ int id catalyst_redbox_title 0x0
 int id center 0x0
 int id centerCrop 0x0
 int id centerInside 0x0
-int id chathead_img 0x0
 int id checkbox 0x0
 int id chronometer 0x0
 int id content 0x0
@@ -826,7 +823,6 @@ int id text2 0x0
 int id textSpacerNoButtons 0x0
 int id textSpacerNoTitle 0x0
 int id time 0x0
-int id timer_text 0x0
 int id title 0x0
 int id titleDividerNoCustom 0x0
 int id title_template 0x0
@@ -876,7 +872,6 @@ int layout activity_rtc 0x0
 int layout autofill_inline_suggestion 0x0
 int layout custom_dialog 0x0
 int layout dev_loading_view 0x0
-int layout floating_widget 0x0
 int layout fps_view 0x0
 int layout notification_action 0x0
 int layout notification_action_tombstone 0x0

@@ -635,7 +635,6 @@ drawable abc_textfield_search_material
 drawable abc_vector_test
 drawable autofill_inline_suggestion_chip_background
 drawable icon
-drawable logo
 drawable notification_action_background
 drawable notification_bg
 drawable notification_bg_low
@@ -650,7 +649,6 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable redbox_top_border_background
 drawable remove
-drawable rounded_corners
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id accessibility_action_clickable_span
@@ -725,7 +723,6 @@ id catalyst_redbox_title
 id center
 id centerCrop
 id centerInside
-id chathead_img
 id checkbox
 id chronometer
 id content
@@ -827,7 +824,6 @@ id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
 id time
-id timer_text
 id title
 id titleDividerNoCustom
 id title_template
@@ -877,7 +873,6 @@ layout activity_rtc
 layout autofill_inline_suggestion
 layout custom_dialog
 layout dev_loading_view
-layout floating_widget
 layout fps_view
 layout notification_action
 layout notification_action_tombstone

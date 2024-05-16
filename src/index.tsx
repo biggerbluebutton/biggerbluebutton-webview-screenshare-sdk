@@ -18,6 +18,8 @@ type BigBlueButtonTabletSdkProps = {
   onError?: any;
   onSuccess?: any;
   callState?: any;
+  onShouldStartLoadWithRequest?: any;
+  injectedJavaScript?: string;
 };
 
 const data = {
@@ -36,6 +38,8 @@ export const BigBlueButtonTablet = ({
   onError,
   onSuccess,
   callState,
+  onShouldStartLoadWithRequest,
+  injectedJavaScript,
 }: BigBlueButtonTabletSdkProps) => {
   const webViewRef = useRef(null);
   const thisInstanceId = ++data.instances;
@@ -67,31 +71,6 @@ export const BigBlueButtonTablet = ({
     };
   }, []);
 
-  const jsCode = `
-  (function () {
-    var originalLog = console.log;
-    console.log = function () {
-        // Check if there is at least an eleventh argument
-        if (arguments.length > 10) {
-            var msg = ''; 
-            if (arguments[10].includes("Audio Joined")) { 
-                msg = "callStarted"; 
-            } else if (arguments[10].includes("Audio ended without issue")) { 
-                msg = "callStopped"; 
-            }
-
-            // If msg is set, create a JSON object and send it
-            if (msg) {
-                var dataToSend = JSON.stringify({ method: msg });
-                window.ReactNativeWebView.postMessage(dataToSend);    
-            }
-        }
-        // Call the original console.log with all its arguments
-        originalLog.apply(console, arguments);    
-    };
-})();
-    `;
-
   return (
     <>
       {renderPlatformSpecificComponents()}
@@ -106,9 +85,10 @@ export const BigBlueButtonTablet = ({
           }
           applicationNameForUserAgent="BigBlueButton-Tablet"
           allowsInlineMediaPlayback={true}
-          injectedJavaScript={jsCode}
+          injectedJavaScript={injectedJavaScript}
           javaScriptEnabled={true}
           mediaCapturePermissionGrantType={'grant'}
+          onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
           onLoadEnd={(content: any) => {
             /*in case of success, the property code is not defined*/
             if (typeof content.nativeEvent.code !== 'undefined') {
