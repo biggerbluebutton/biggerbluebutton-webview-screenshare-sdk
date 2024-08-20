@@ -46,8 +46,8 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private MediaPlayer mediaPlayer;
   private ReactApplicationContext reactContext;
 
-  private static final int CAPTURE_PERMISSION_REQUEST_CODE = 1;
-  // List of mandatory application permissions.／
+  private static final int CAPTURE_PERMISSION_REQUEST_CODE = 130;
+
   private static final String[] MANDATORY_PERMISSIONS = {"android.permission.MODIFY_AUDIO_SETTINGS",
     "android.permission.MEDIA_PROJECTION", "android.permission.FOREGROUND_SERVICE",
     "android.permission.RECORD_AUDIO", "android.permission.INTERNET","android.permission.CAMERA","android.permission.WRITE_EXTERNAL_STORAGE","android.permission.SYSTEM_ALERT_WINDOW"};
@@ -210,14 +210,16 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private void startScreenCapture() {
     Activity currentActivity = getCurrentActivity();
     if (currentActivity != null) {
+      Utils.showLogs("topStartScreenCapture");
       try {
         MediaProjectionManager mediaProjectionManager =
           (MediaProjectionManager)currentActivity.getApplication().getSystemService(
             Context.MEDIA_PROJECTION_SERVICE);
         if (mediaProjectionManager != null) {
+          Utils.showLogs("startScreenCapture");
           Intent intent = mediaProjectionManager.createScreenCaptureIntent();
           currentActivity.startActivityForResult(intent, CAPTURE_PERMISSION_REQUEST_CODE);
-          Utils.showLogs("startScreenCapture");
+
         } else {
           Utils.showLogs("Failed to get MediaProjectionManager");
         }
@@ -264,24 +266,37 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
     builder.show();
   }
 
-  @Override
-  public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-    if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-      BigBlueButtonSDK.initialize(activity, reactContext);
-      EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
-      // Store or process the result data as needed
-      mMediaProjectionPermissionResultData = data;
-      Utils.showLogs("Inside ...");
-      Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
+//  @Override
+//  public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+//    if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+//      BigBlueButtonSDK.initialize(activity, reactContext);
+//      EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
+//      // Store or process the result data as needed
+//      mMediaProjectionPermissionResultData = data;
+//      Utils.showLogs("Inside ...");
+//
+//
+//    }
+
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+
+      if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE) {
+        if (resultCode == Activity.RESULT_OK) {
+          BigBlueButtonSDK.initialize(activity, reactContext);
+          EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
+          mMediaProjectionPermissionResultData = data;
+          Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
       serviceIntent.putExtra("resultCode", resultCode);
       serviceIntent.putExtra("data", data);
       reactContext.startForegroundService(serviceIntent);
       reactContext.bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
-
+        } else {
+          Utils.showLogs("Screen capture permission denied");
+        }
+      }
     }
 
-
-  }
 
 
 

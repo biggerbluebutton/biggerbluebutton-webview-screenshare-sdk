@@ -3,8 +3,11 @@ import {
   Platform,
   ViewStyle,
   NativeModules,
+  SafeAreaView,
+  View,
+  FlatList,
 } from 'react-native';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import BBBN_SystemBroadcastPicker from './native-components/BBBN_SystemBroadcastPicker';
 import { WebView } from 'react-native-webview';
 import { handleWebviewMessage } from './webview/message-handler';
@@ -15,11 +18,20 @@ import * as onBroadcastFinished from './events/onBroadcastFinished';
 type BigBlueButtonTabletSdkProps = {
   url: string;
   style: ViewStyle;
-  onError?: any;
-  onSuccess?: any;
+  onError?: (content: any) => void;
+  onSuccess?: (content: any) => void;
   callState?: any;
-  onShouldStartLoadWithRequest?: any;
+  onShouldStartLoadWithRequest?: (navState: any) => boolean;
   injectedJavaScript?: string;
+  onNavigationStateChange?: (navState: any) => void;
+  onOpenWindow?: (event: any) => void;
+  renderTabItem?: ({
+    item,
+  }: {
+    item: { id: number; url: string };
+  }) => React.ReactElement | null;
+  currentTab?: any;
+  tabsData?: any;
 };
 
 const data = {
@@ -40,8 +52,13 @@ export const BigBlueButtonTablet = ({
   callState,
   onShouldStartLoadWithRequest,
   injectedJavaScript,
+  onNavigationStateChange,
+  onOpenWindow,
+  renderTabItem,
+  currentTab,
+  tabsData,
 }: BigBlueButtonTabletSdkProps) => {
-  const webViewRef = useRef(null);
+  const webViewRef = useRef<WebView>(null);
   const thisInstanceId = ++data.instances;
 
   useEffect(() => {
@@ -70,27 +87,54 @@ export const BigBlueButtonTablet = ({
       }
     };
   }, []);
+  const renderItem = useCallback(
+    ({ item }: { item: { id: number; url: string } }) => {
+      if (renderTabItem) {
+        return renderTabItem({ item });
+      }
+      return null;
+    },
+    [renderTabItem]
+  );
 
   return (
-    <>
-      {renderPlatformSpecificComponents()}
-      {
+    <SafeAreaView style={{ flex: 1 }}>
+      {tabsData?.length > 1 && (
+        <View style={{ flexDirection: 'row' }}>
+          <FlatList
+            horizontal
+            data={tabsData}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            initialNumToRender={tabsData.length}
+            getItemLayout={(_, index) => ({
+              length: 100,
+              offset: 100 * index,
+              index,
+            })}
+          />
+        </View>
+      )}
+      <View style={{ flex: 1 }}>
+        {renderPlatformSpecificComponents()}
+
         <WebView
           ref={webViewRef}
-          source={{ uri: url }}
-          style={{ ...style }}
+          source={{ uri: currentTab?.url || url }}
+          style={{ ...style, marginTop: 0 }}
           contentMode={'mobile'}
           onMessage={(msg: any) =>
             handleWebviewMessage(thisInstanceId, webViewRef, msg, callState)
           }
+          onOpenWindow={onOpenWindow}
           applicationNameForUserAgent="BigBlueButton-Tablet"
           allowsInlineMediaPlayback={true}
           injectedJavaScript={injectedJavaScript}
           javaScriptEnabled={true}
           mediaCapturePermissionGrantType={'grant'}
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+          onNavigationStateChange={onNavigationStateChange}
           onLoadEnd={(content: any) => {
-            /*in case of success, the property code is not defined*/
             if (typeof content.nativeEvent.code !== 'undefined') {
               if (onError) onError(content);
             } else {
@@ -98,7 +142,7 @@ export const BigBlueButtonTablet = ({
             }
           }}
         />
-      }
-    </>
+      </View>
+    </SafeAreaView>
   );
 };
