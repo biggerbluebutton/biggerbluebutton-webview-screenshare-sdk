@@ -48,3 +48,11 @@ Thumbs.db
 *.mov
 *.wmv
 
+
+# ignore build files
+example/.bundle
+example/.yarn
+example/node_modules
+example/vendor
+
+android/build
