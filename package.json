@@ -155,6 +155,7 @@
   },
   "dependencies": {
     "react-native-background-timer": "^2.4.1",
-    "react-native-webview": "^13.8.6"
+    "react-native-webview": "^13.8.6",
+    "react-native-webrtc": "^124.0.5"
   }
 }

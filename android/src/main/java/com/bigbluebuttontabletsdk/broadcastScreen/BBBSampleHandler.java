@@ -5,18 +5,11 @@ import static android.app.Activity.RESULT_CANCELED;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ServiceInfo;
-import android.media.projection.MediaProjection;
-import android.media.projection.MediaProjectionManager;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
@@ -57,11 +50,11 @@ public class BBBSampleHandler extends Service {
     createNotificationChannel();
     // Create a notification
     Notification notification = buildNotification();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      startForeground(1122, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
-    } else {
-      startForeground(1122, notification);
-    }
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//      startForeground(1122, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+//    } else {
+      startForeground(1128, notification);
+//    }
 
     return START_NOT_STICKY;
   }
@@ -121,11 +114,14 @@ public class BBBSampleHandler extends Service {
 
   }
 
+//  private void finishBroadcastGracefully() {
+//    stopSelf();
+//    stopForeground(true);
+//  }
   private void finishBroadcastGracefully() {
     stopSelf();
     stopForeground(true);
   }
-
 
   @Override
   public void onDestroy() {

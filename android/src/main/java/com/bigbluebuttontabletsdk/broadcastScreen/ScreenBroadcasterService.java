@@ -35,6 +35,7 @@ public class ScreenBroadcasterService implements ScreenShareWebRTCClientInterfac
 
   private static final String TAG = "ScreenShareService   ";
   private ScreenShareWebRTCClient webRTCClient;
+
   private boolean isConnected = false;
   private Display display;
 
@@ -66,7 +67,7 @@ private Context mContext;
           Utils.showLogs(TAG+ "User has revoked media projection permissions");
         }
       });
-    Utils.showLogs(TAG+ "createMediaProjection videoCapturer "+videoCapturer);
+    Utils.showLogs(TAG+ "createMediaProjection videoCapture "+videoCapturer);
     return videoCapturer;
   }
 
