@@ -60,6 +60,73 @@ export const BigBlueButtonTablet = ({
 }: BigBlueButtonTabletSdkProps) => {
   const webViewRef = useRef<WebView>(null);
   const thisInstanceId = ++data.instances;
+  const TARGET_SCALE = 0.85;
+  const zoomOutBeforeLoad = `
+  (function(){
+    try {
+      var s=${TARGET_SCALE};
+      var meta = document.querySelector('meta[name="viewport"]');
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = 'viewport';
+        document.head.appendChild(meta);
+      }
+      // Set an initial zoom-out, allow pinch-zoom afterwards
+      meta.content = 'width=device-width, initial-scale=' + s + ', minimum-scale=0.5, maximum-scale=3, user-scalable=yes, viewport-fit=cover';
+      document.documentElement.style.overflowY = 'auto';
+      document.body.style.overflowY = 'auto';
+      document.documentElement.style.height = 'auto';
+      document.body.style.height = 'auto';
+    } catch(e) {}
+  })();
+  true;
+  `;
+
+  const autoFitAfterLoad = `
+(function(){
+  try {
+    var s=${TARGET_SCALE};
+    var floor = 0.75;   // don't go below 75%
+    var step  = 0.05;   // shrink by 5% per pass
+    function setViewportScale(x){
+      var m = document.querySelector('meta[name="viewport"]');
+      if (!m) return;
+      m.content = 'width=device-width, initial-scale=' + x + ', minimum-scale=0.5, maximum-scale=3, user-scalable=yes, viewport-fit=cover';
+    }
+    function applyTransformFallback(x){
+      // Final fallback: visually scale everything and widen layout to avoid cropping
+      var html = document.documentElement, body = document.body;
+      html.style.transformOrigin = 'top left';
+      html.style.transform = 'scale(' + x + ')';
+      html.style.width = (100/x) + 'vw';
+      body.style.width = (100/x) + 'vw';
+      html.style.height = 'auto';
+      body.style.height = 'auto';
+      // ensure nothing hides under a footer
+      body.style.paddingBottom = '12px';
+    }
+    function fits(){
+      var H = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+      var C = Math.max(document.documentElement.clientHeight, window.innerHeight||0);
+      return H <= C + 2; // allow tiny rounding
+    }
+    function tryFit(){
+      if (fits()) return;
+      if (s > floor) {
+        s = Math.max(floor, s - step);
+        setViewportScale(s);
+        setTimeout(tryFit, 120);
+      } else {
+        // Still taller? Force visual scale.
+        applyTransformFallback(s);
+      }
+    }
+    // kick after layout stabilizes
+    setTimeout(tryFit, 120);
+  } catch(e){}
+})();
+true;
+`;
 
   useEffect(() => {
     const logPrefix = `[${thisInstanceId}] - ${url.substring(8, 16)}`;
@@ -121,24 +188,32 @@ export const BigBlueButtonTablet = ({
         <WebView
           ref={webViewRef}
           source={{ uri: currentTab?.url || url }}
-          style={{ ...style, marginTop: 0 }}
-          contentMode={'mobile'}
-          onMessage={(msg: any) =>
-            handleWebviewMessage(thisInstanceId, webViewRef, msg, callState)
-          }
-          onOpenWindow={onOpenWindow}
+          style={{ ...style, flex: 1, marginTop: 0 }}
+          contentMode="mobile"
           applicationNameForUserAgent="BigBlueButton-Tablet"
-          allowsInlineMediaPlayback={true}
-          injectedJavaScript={injectedJavaScript}
-          javaScriptEnabled={true}
-          mediaCapturePermissionGrantType={'grant'}
+          allowsInlineMediaPlayback
+          javaScriptEnabled
+          mediaCapturePermissionGrantType="grant"
+          scrollEnabled
+          bounces
+          automaticallyAdjustContentInsets={false}
+          contentInsetAdjustmentBehavior="never"
+          nestedScrollEnabled
+          overScrollMode="always"
+          setSupportMultipleWindows={false}
+          onOpenWindow={onOpenWindow}
+          injectedJavaScriptBeforeContentLoaded={zoomOutBeforeLoad}
+          injectedJavaScript={autoFitAfterLoad && injectedJavaScript}
+          onMessage={(msg) =>
+            handleWebviewMessage(0, webViewRef, msg, callState)
+          }
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
           onNavigationStateChange={onNavigationStateChange}
           onLoadEnd={(content: any) => {
             if (typeof content.nativeEvent.code !== 'undefined') {
-              if (onError) onError(content);
+              onError?.(content);
             } else {
-              if (onSuccess) onSuccess(content);
+              onSuccess?.(content);
             }
           }}
         />

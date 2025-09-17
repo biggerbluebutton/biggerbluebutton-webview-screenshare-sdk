@@ -33,6 +33,7 @@ public class ScreenShareWebRTCClient implements PeerConnection.Observer {
   private SurfaceTextureHelper surfaceTextureHelper;
   private boolean isRatioDefined = false;
   private Context mContext;
+  private volatile boolean isShutDown = false;
 
   public ScreenShareWebRTCClient(Context context,List<PeerConnection.IceServer> iceServers,VideoCapturer videoCapturer ,ScreenShareWebRTCClientInterface delegate) {
     Utils.showLogs(TAG+ "ScreenShareWebRTCClient>>>> ");
@@ -74,6 +75,65 @@ public class ScreenShareWebRTCClient implements PeerConnection.Observer {
 
     createMediaSenders();
   }
+
+  public synchronized void shutdown() {
+    if (isShutDown) return;
+    isShutDown = true;
+    Utils.showLogs(TAG + "shutdown() -> tearing down");
+
+    // 1) Stop sending & remove video senders (don’t reuse old SSRCs/track)
+    try {
+      if (peerConnection != null) {
+        for (RtpSender s : peerConnection.getSenders()) {
+          MediaStreamTrack t = s.track();
+          if (t != null && MediaStreamTrack.VIDEO_TRACK_KIND.equals(t.kind())) {
+            try { s.setTrack(null, false); } catch (Throwable ignore) {}
+            try { peerConnection.removeTrack(s); } catch (Throwable ignore) {}
+            try { t.setEnabled(false); } catch (Throwable ignore) {}
+            try { t.dispose(); } catch (Throwable ignore) {}
+          }
+        }
+      }
+    } catch (Throwable e) { Log.w(TAG, "shutdown(): sender cleanup", e); }
+
+    // 2) Stop the capturer chain (order matters)
+    try {
+      if (videoCapturer != null) {
+        try { videoCapturer.stopCapture(); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+        try { videoCapturer.dispose(); } catch (Throwable ignore) {}
+      }
+    } catch (Throwable ignore) {}
+    videoCapturer = null;
+
+    try { if (localVideoTrack != null) localVideoTrack.dispose(); } catch (Throwable ignore) {}
+    localVideoTrack = null;
+
+    try { if (videoSource != null) videoSource.dispose(); } catch (Throwable ignore) {}
+    videoSource = null;
+
+    try { if (surfaceTextureHelper != null) surfaceTextureHelper.dispose(); } catch (Throwable ignore) {}
+    surfaceTextureHelper = null;
+
+    // 3) Close transport (forces new ICE creds next time)
+    try {
+      if (peerConnection != null) {
+        peerConnection.close();
+        peerConnection.dispose();
+      }
+    } catch (Throwable ignore) {}
+    peerConnection = null;
+
+    // 4) Dispose factory (optional but good hygiene)
+    try { if (factory != null) factory.dispose(); } catch (Throwable ignore) {}
+    factory = null;
+
+    // (Optional on older libs)
+    // try { PeerConnectionFactory.stopInternalTracingCapture(); } catch (Throwable ignore) {}
+    // try { PeerConnectionFactory.shutdownInternalTracer(); } catch (Throwable ignore) {}
+
+    Utils.showLogs(TAG + "shutdown() -> done");
+  }
+
   private void createMediaSenders() {
     String streamId = "stream";
     // Video
@@ -86,6 +146,8 @@ public class ScreenShareWebRTCClient implements PeerConnection.Observer {
 //    if (audioTrack!= null)
 //      peerConnection.addTrack(audioTrack, Collections.singletonList(streamId));
   }
+
+
   public VideoTrack createVideoTrack2() {
     videoSource = factory.createVideoSource(true);
     videoCapturer.initialize(surfaceTextureHelper, mContext, videoSource.getCapturerObserver());

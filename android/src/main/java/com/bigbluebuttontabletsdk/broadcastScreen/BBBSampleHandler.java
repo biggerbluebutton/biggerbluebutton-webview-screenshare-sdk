@@ -21,11 +21,13 @@ import com.bigbluebuttontabletsdk.utils.Utils;
 import org.webrtc.IceCandidate;
 
 public class BBBSampleHandler extends Service {
-  private static final String TAG = "BBBSampleHandler";
+  private static final String TAG = "BBBSampleHandler-->";
   private static final String CHANNEL_ID = "ScreenShareChannel";
   private ScreenBroadcasterService mScreenBroadcasterService;
   private SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener;
   private PreferencesUtils sharedPreferences;
+  private boolean listenersRegistered = false;
+  private boolean cleanedUp = false;
 
   public class LocalBinder extends Binder {
     public BBBSampleHandler getService() {
@@ -38,23 +40,18 @@ public class BBBSampleHandler extends Service {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
 
-    Utils.showLogs(TAG+ "onStartCommand ");
-    if (intent != null) {
-      String action = intent.getAction();
-      if ("STOP_SERVICE".equals(action)) {
-        // Stop the service
-        stopSelf();
-      }
+    Utils.showLogs(TAG+ "onStartCommand "+ mScreenBroadcasterService);
+    final String action = intent != null ? intent.getAction() : null;
+    if ("STOP_SERVICE".equals(action)) {
+      cleanupAndStop();
+      return START_NOT_STICKY;
     }
-    // Create the notification channel
+
+    cleanupWebRTC();
+
     createNotificationChannel();
-    // Create a notification
     Notification notification = buildNotification();
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//      startForeground(1122, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
-//    } else {
       startForeground(1128, notification);
-//    }
 
     return START_NOT_STICKY;
   }
@@ -83,6 +80,7 @@ public class BBBSampleHandler extends Service {
   public void startToObserveListeners(Intent data) {
     sharedPreferences = PreferencesUtils.getInstance(this);
     onSharedPreferenceChangeListener = (sharedPreferences1, key) -> {
+
       switch (key) {
         case BBBSharedData.SharedData.createScreenShareOffer:
           Utils.showLogs(TAG+"Observer detected a createScreenShareOffer request!");
@@ -109,6 +107,7 @@ public class BBBSampleHandler extends Service {
       }
     };
     sharedPreferences.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
+    listenersRegistered = true;
     mScreenBroadcasterService = new ScreenBroadcasterService();
     mScreenBroadcasterService.initializePeerConnection(this,data);
 
@@ -118,16 +117,43 @@ public class BBBSampleHandler extends Service {
 //    stopSelf();
 //    stopForeground(true);
 //  }
-  private void finishBroadcastGracefully() {
-    stopSelf();
-    stopForeground(true);
+
+  private void unregisterPreferenceListener() {
+    if (listenersRegistered && sharedPreferences != null && onSharedPreferenceChangeListener != null) {
+      try { sharedPreferences.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener); }
+      catch (Exception ignored) {}
+      onSharedPreferenceChangeListener = null;
+      listenersRegistered = false;
+    }
   }
+
+
+  /** Fully tear down capturer, tracks, MediaProjection, PeerConnection, threads, etc. */
+  private void cleanupWebRTC() {
+    if (mScreenBroadcasterService != null) {
+      try { mScreenBroadcasterService.clear(); } catch (Exception ignored) {}
+      mScreenBroadcasterService = null;    // <— THIS was commented out in your code; keep it!
+    }
+  }
+
+  private void cleanupAndStop() {
+    cleanupWebRTC();
+    unregisterPreferenceListener();
+    try { stopForeground(true); } catch (Exception ignored) {}
+    try { stopSelf(); } catch (Exception ignored) {}
+  }
+
+  private void finishBroadcastGracefully() {
+    cleanupAndStop();
+  }
+
+
+
 
   @Override
   public void onDestroy() {
+    cleanupAndStop();
     super.onDestroy();
-    // Clean up resources here
-    stopForeground(true); // Stop the foreground service
   }
 
 
@@ -139,6 +165,7 @@ public class BBBSampleHandler extends Service {
   @Override
   public void onTaskRemoved(Intent rootIntent) {
     super.onTaskRemoved(rootIntent);
-    stopSelf();
+//    stopSelf();
+    cleanupAndStop();
   }
 }

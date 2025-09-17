@@ -57,6 +57,7 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private BBBSampleHandler bbbSampleHandler;
   private static Intent mMediaProjectionPermissionResultData;
   boolean isAllDone = true;
+  private boolean isBound = false;
 
   public BBBN_ScreenShareService(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -81,13 +82,10 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   @ReactMethod
   public void initializeScreenShare() {
     Utils.showLogs("initializeScreenShare "+getCurrentActivity());
-   // activateAudioSession(true);
     Uri path = Uri.parse("android.resource://" + reactContext.getPackageName() + "/" + R.raw.music2);
     mediaPlayer = MediaPlayer.create(reactContext, path);
     mediaPlayer.start();
     playSoundInLoop();
-//    Intent intent = new Intent(getCurrentActivity(), StartBroadcastActivity.class);
-//    Objects.requireNonNull(getCurrentActivity()).startActivity(intent);
     checkAllDonePermission();
     EventEmitterData.emitEvent(reactContext,EventEmitterData.onBroadcastRequested, null);
   }
@@ -120,7 +118,18 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   public void stopScreenShareBroadcastExtension() {
     Utils.showLogs("stopScreenShareBroadcastExtension");
     PreferencesUtils.getInstance(reactContext).putString(BBBSharedData.SharedData.onBroadcastStopped, BBBSharedData.generatePayload(new HashMap<>()));
+      Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
+      reactContext.stopService(serviceIntent);
 
+    // unbind first, or stopService will keep the service alive due to binding
+    unbindIfBound();
+//    clearSignalingKeys();
+
+    // release your audio loop
+    activateAudioSession(false);
+
+    // optional: force a fresh permission each time
+    mMediaProjectionPermissionResultData = null;
   }
   @ReactMethod
   public void handleBackPress() {
@@ -141,6 +150,14 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
       }
     }
     return false;
+  }
+
+  private void unbindIfBound() {
+    if (isBound) {
+      try { reactContext.unbindService(serviceConnection); } catch (Exception ignored) {}
+      isBound = false;
+      bbbSampleHandler = null;
+    }
   }
 
   private void activateAudioSession(boolean activate) {
@@ -210,13 +227,13 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
   private void startScreenCapture() {
     Activity currentActivity = getCurrentActivity();
     if (currentActivity != null) {
-      Utils.showLogs("topStartScreenCapture");
+      Utils.showLogs(REACT_CLASS+" topStartScreenCapture");
       try {
         MediaProjectionManager mediaProjectionManager =
           (MediaProjectionManager)currentActivity.getApplication().getSystemService(
             Context.MEDIA_PROJECTION_SERVICE);
         if (mediaProjectionManager != null) {
-          Utils.showLogs("startScreenCapture");
+          Utils.showLogs(REACT_CLASS+" startScreenCapture");
           Intent intent = mediaProjectionManager.createScreenCaptureIntent();
           currentActivity.startActivityForResult(intent, CAPTURE_PERMISSION_REQUEST_CODE);
 
@@ -229,66 +246,42 @@ public class BBBN_ScreenShareService extends ReactContextBaseJavaModule implemen
     }
   }
 
+  private void clearSignalingKeys() {
+    PreferencesUtils p = PreferencesUtils.getInstance(reactContext);
+   p.clearPreferences();
+  }
+
   private final ServiceConnection serviceConnection = new ServiceConnection() {
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       Utils.showLogs("onServiceConnected ...");
       BBBSampleHandler.LocalBinder binder = (BBBSampleHandler.LocalBinder) iBinder;
       bbbSampleHandler = binder.getService();
+      isBound = true;
       bbbSampleHandler.startToObserveListeners(mMediaProjectionPermissionResultData);
 
     }
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-
+      isBound = false;
+      bbbSampleHandler = null;
     }
   };
-
-  private void needPermissionDialog(final int requestCode){
-    AlertDialog.Builder builder = new AlertDialog.Builder(reactContext);
-    builder.setMessage("You need to allow permission");
-    builder.setPositiveButton("OK",
-      new android.content.DialogInterface.OnClickListener() {
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-          // TODO Auto-generated method stub
-          requestPermission(requestCode);
-        }
-      });
-    builder.setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        // TODO Auto-generated method stub
-
-      }
-    });
-    builder.setCancelable(false);
-    builder.show();
-  }
-
-//  @Override
-//  public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-//    if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-//      BigBlueButtonSDK.initialize(activity, reactContext);
-//      EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
-//      // Store or process the result data as needed
-//      mMediaProjectionPermissionResultData = data;
-//      Utils.showLogs("Inside ...");
-//
-//
-//    }
 
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
 
       if (requestCode == CAPTURE_PERMISSION_REQUEST_CODE) {
         if (resultCode == Activity.RESULT_OK) {
+//          unbindIfBound();
+//          clearSignalingKeys();
           BigBlueButtonSDK.initialize(activity, reactContext);
           EventEmitterData.emitEvent(reactContext, EventEmitterData.onBroadcastStarted, null);
           mMediaProjectionPermissionResultData = data;
           Intent serviceIntent = new Intent(reactContext, BBBSampleHandler.class);
       serviceIntent.putExtra("resultCode", resultCode);
       serviceIntent.putExtra("data", data);
+          Utils.showLogs(REACT_CLASS+" onActivityResult");
       reactContext.startForegroundService(serviceIntent);
       reactContext.bindService(serviceIntent, serviceConnection, BIND_AUTO_CREATE);
         } else {

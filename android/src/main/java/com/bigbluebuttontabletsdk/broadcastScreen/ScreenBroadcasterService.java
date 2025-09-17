@@ -33,14 +33,25 @@ import java.util.List;
 
 public class ScreenBroadcasterService implements ScreenShareWebRTCClientInterface {
 
-  private static final String TAG = "ScreenShareService   ";
+  private static final String TAG = "ScreenShareService-->";
   private ScreenShareWebRTCClient webRTCClient;
 
-  private boolean isConnected = false;
   private Display display;
 
 private Context mContext;
 
+  public synchronized void clear() {
+    Utils.showLogs(TAG + webRTCClient);
+    if (webRTCClient != null) {
+      try {
+        webRTCClient.shutdown();
+      } catch (Throwable t) {
+        Log.w(TAG, "webRTCClient.shutdown() error", t);
+      }
+      webRTCClient = null;
+    }
+    Utils.showLogs(TAG + "clear() -> done");
+  }
   public void initializePeerConnection(Context context, Intent intent) {
 
     WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
@@ -137,7 +148,6 @@ private Context mContext;
         Utils.showLogs(TAG+ "new signaling state -> UNKNOWN");
         break;
     }
-    isConnected = true;
     HashMap<String, String> properties = new HashMap<>();
     properties.put("newState", stateString);
     String stunTurnJson2 = BBBSharedData.generatePayload(properties);
@@ -154,4 +164,5 @@ private Context mContext;
   public void webRTCClient(ScreenShareWebRTCClient screenShareWebRTCClient, PeerConnection.IceConnectionState iceConnectionState) {
 
   }
+
 }

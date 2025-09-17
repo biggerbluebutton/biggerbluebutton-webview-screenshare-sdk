@@ -75,6 +75,16 @@ public class PreferencesUtils {
      * Here clear the shared preferences and restore the user first time install key value as false,
      * because user is launched this app already
      */
+    public void remove(String key) {
+      editor.remove(key).commit();   // or .apply()
+    }
+
+  public void removeAll(String... keys) {
+    for (String k : keys) {
+      editor.remove(k);
+    }
+    editor.commit();               // or .apply()
+  }
     public void clearPreferences() {
         if (editor != null) {
             editor.clear().commit();
