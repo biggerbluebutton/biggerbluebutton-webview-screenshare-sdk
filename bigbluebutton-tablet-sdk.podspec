@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "14.7" }
-  s.source       = { :git => "https://AdnanTalat01@bitbucket.org/wizard24h/biggerbluebutton-webview-screenshare-sdk.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/biggerbluebutton/biggerbluebutton-webview-screenshare-sdk.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift}"
   s.resources = "ios/Assets/*"

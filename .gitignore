@@ -50,9 +50,5 @@ Thumbs.db
 
 
 # ignore build files
-example/.bundle
-example/.yarn
-example/node_modules
-example/vendor
-example/android/.gradle
+example 
 android/build
