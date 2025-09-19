@@ -20,7 +20,7 @@ type BigBlueButtonTabletSdkProps = {
   style: ViewStyle;
   onError?: (content: any) => void;
   onSuccess?: (content: any) => void;
-  callState?: any;
+  setCallState?: any;
   onShouldStartLoadWithRequest?: (navState: any) => boolean;
   injectedJavaScript?: string;
   onNavigationStateChange?: (navState: any) => void;
@@ -196,11 +196,11 @@ true;
           mediaCapturePermissionGrantType="grant"
           scrollEnabled
           bounces
-          automaticallyAdjustContentInsets={false}
-          contentInsetAdjustmentBehavior="never"
+          // automaticallyAdjustContentInsets={false}
+          // contentInsetAdjustmentBehavior="never"
           nestedScrollEnabled
           overScrollMode="always"
-          setSupportMultipleWindows={false}
+          // setSupportMultipleWindows={false}
           onOpenWindow={onOpenWindow}
           injectedJavaScriptBeforeContentLoaded={zoomOutBeforeLoad}
           injectedJavaScript={autoFitAfterLoad && injectedJavaScript}
