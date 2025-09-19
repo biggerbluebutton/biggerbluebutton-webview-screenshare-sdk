@@ -49,7 +49,7 @@ export const BigBlueButtonTablet = ({
   style,
   onError,
   onSuccess,
-  callState,
+  setCallState,
   onShouldStartLoadWithRequest,
   injectedJavaScript,
   onNavigationStateChange,
@@ -205,7 +205,7 @@ true;
           injectedJavaScriptBeforeContentLoaded={zoomOutBeforeLoad}
           injectedJavaScript={autoFitAfterLoad && injectedJavaScript}
           onMessage={(msg) =>
-            handleWebviewMessage(0, webViewRef, msg, callState)
+            handleWebviewMessage(0, webViewRef, msg, setCallState)
           }
           onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
           onNavigationStateChange={onNavigationStateChange}

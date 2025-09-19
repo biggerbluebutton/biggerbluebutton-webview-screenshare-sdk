@@ -38,13 +38,13 @@ export function handleWebviewMessage(
   instanceId: Number,
   webViewRef: MutableRefObject<any>,
   event: WebViewMessageEvent,
-  callState?: any
+  setCallState?: any
 ) {
   const stringData = event?.nativeEvent?.data;
   const data = JSON.parse(stringData);
   console.log('handleWebviewMessage - ', instanceId);
 
-  callState(data?.method);
+  setCallState(data?.method);
   if (data?.method && data?.sequence) {
     let promise;
     switch (data?.method) {
