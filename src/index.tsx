@@ -18,9 +18,9 @@ import * as onBroadcastFinished from './events/onBroadcastFinished';
 type BigBlueButtonTabletSdkProps = {
   url: string;
   style: ViewStyle;
+  setCallState?: any;
   onError?: (content: any) => void;
   onSuccess?: (content: any) => void;
-  setCallState?: any;
   onShouldStartLoadWithRequest?: (navState: any) => boolean;
   injectedJavaScript?: string;
   onNavigationStateChange?: (navState: any) => void;
@@ -47,9 +47,9 @@ const renderPlatformSpecificComponents = () =>
 export const BigBlueButtonTablet = ({
   url,
   style,
+  setCallState,
   onError,
   onSuccess,
-  setCallState,
   onShouldStartLoadWithRequest,
   injectedJavaScript,
   onNavigationStateChange,
