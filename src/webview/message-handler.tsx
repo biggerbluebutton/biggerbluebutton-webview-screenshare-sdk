@@ -42,9 +42,9 @@ export function handleWebviewMessage(
 ) {
   const stringData = event?.nativeEvent?.data;
   const data = JSON.parse(stringData);
-  console.log('handleWebviewMessage - ', instanceId);
+  console.log(data, 'handleWebviewMessage - ', instanceId);
 
-  setCallState(data?.method);
+  setCallState(data);
   if (data?.method && data?.sequence) {
     let promise;
     switch (data?.method) {
